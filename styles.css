@@ -1,0 +1,86 @@
+#input {
+    font: 1em sans-serif;
+    font-size: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px #ccc;
+    width: 50vh;
+    height: 20vh;
+    resize: none;
+  }
+
+  #input_label{
+    font-size: 10px;
+    margin-left: 8px;
+    margin-bottom: 5px;
+  }
+
+  #input_button
+  {
+    margin-top: 10px;
+    margin-left: auto;
+    background-color: rgb(255, 254, 255);
+    display: flex;
+    justify-content: end;
+    color: rgb(148, 12, 198);
+    font-weight: 750;
+    font-size: 8px;
+    padding: 10px 15px;
+    border: 1px rgb(43, 43, 231);
+    border-radius: 5px;
+    text-align: center;
+    width: min-content;
+    box-shadow: 0px 0px 5px blueviolet;
+
+  }
+
+  #input::placeholder{
+    position: absolute;
+  }
+  #input::selection{
+    direction: ltr;
+  }
+
+  .form-group{
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    margin: auto;
+  }
+
+.profile-image{
+    display: inline;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.username{
+    margin-left: 10px;
+    display: block;
+    text-align: justify;
+    font-size: 15px;
+    font-family:Arial, Helvetica, sans-serif;
+    position: relative;
+    top: 15px;
+}
+
+.blogpost
+{
+    display: flex;
+    width: max-content;
+    align-content: center;
+    background-color: white;
+    margin: auto;
+    flex-direction: column;
+}
+
+.blogpost_text
+{
+    display: block;
+    font-size: medium;
+    font-family: sans-serif;
+    max-width: 1000px;
+}

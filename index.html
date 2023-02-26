@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="temp.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="form-group">
+                <label for="input" id="input_label">Write something</label>
+                <textarea name="input" id="input" placeholder="What's on your mind?"></textarea>
+                <!--<input name="input" id="input" type="text" placeholder="What's on your mind?">-->
+                <button id="input_button" type="button" onclick="createPost()">Post</button>
+        </div>
+
+        <div class="blogpost-container">
+            <div class="blogpost">
+                <div style="display: flex;">
+                    <img class="profile-image" src="https://i.pinimg.com/originals/54/e6/3c/54e63c9e4830da4bc23912e6d941e53c.png" alt="profile-image">
+                    <span class="username">Username</span>
+                </div>
+                <p class="blogpost_text">Some random quote about life, universe and existence...</p>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
