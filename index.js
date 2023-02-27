@@ -28,7 +28,11 @@ let dummyUser = new User("Mr.Nobody", "some url", "abcd");
 dummyUser = JSON.stringify(dummyUser);
 console.log(dummyUser);
 if(!window.sessionStorage.getItem("currentUser"))
-    window.sessionStorage.setItem("currentUser", dummyUser);
+    {
+        //window.sessionStorage.setItem("currentUser", dummyUser);
+        // redirect
+        //window.location.href = "login.html";
+    }
 
 const tempUser = JSON.parse(window.sessionStorage.getItem("currentUser"));
 console.log(tempUser);
