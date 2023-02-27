@@ -55,16 +55,19 @@ function createPost()
 {
     var str = document.getElementById("input").value;
     document.getElementById("input").value = "";
-    console.log("content: ", str);
     var user = JSON.parse(window.sessionStorage.getItem("currentUser"));
-    console.log("username: ",user.username);
     let post = new Blog(user, str);
-    console.log("username: ", post.user.username, "post: ",post.blog_text);
-
+    //console.log("username: ", post.user.username, "post: ",post.blog_text);
     userList.set(user.username, user);
     blogList.set(post.id, post);
     updateBlogStorage();
     updateUserStorage();
+    let parent = document.getElementsByClassName("blogpost-container")[0];
+    const blog_div = document.getElementsByClassName("blogpost")[0];
+    const dom_post = blog_div.cloneNode(true);
+    dom_post.querySelector(".username").textContent = `${user.username}`;
+    dom_post.querySelector(".blogpost_text").innerText = `${post.blog_text}`;
+    parent.insertBefore(dom_post, parent.firstChild);
 }
 
 function updateBlogStorage()
@@ -95,20 +98,18 @@ function updateUserStorage()
 function render()
 {
     let parent = document.getElementsByClassName("blogpost-container")[0];
-    let blog_div = document.getElementsByClassName("blogpost")[0];
+    const blog_div = document.getElementsByClassName("blogpost")[0];
     console.log("Total blogs:", blogList.size);
 
     for(let [key,value] of blogList)
     {
-        console.log("key is: ",key);
-        console.log("value is: ",value);
-        console.log("value.user.username is: ", value.user.username);
-        //blog_div.getElementsByTagName("img")[0].src = value.user.img_src;
-        // blog_div.getElementsByTagName("span")[0].textContent = value.user.username;
-        // blog_div.getElementsByTagName("p")[0].textContent = value.blog_text;
-        //parent.appendChild(blog_div);
-        var html_string = "<div class='blogpost'><div style='display: flex;'><img class='profile-image' src='https://i.pinimg.com/originals/54/e6/3c/54e63c9e4830da4bc23912e6d941e53c.png' alt='profile-image'><span class='username'>"+value.user.username + "</span></div><p class='blogpost_text'>"+value.blog_text+"</p></div>";
-        parent.insertAdjacentHTML('afterbegin', html_string);
+        // console.log("key is: ",key);
+        // console.log("value is: ",value);
+        // console.log("value.user.username is: ", value.user.username);
+        const post = blog_div.cloneNode(true);
+        post.querySelector(".username").textContent = `${value.user.username}`;
+        post.querySelector(".blogpost_text").innerText = `${value.blog_text}`;
+        parent.insertBefore(post, parent.firstChild);
     }
     
 }
