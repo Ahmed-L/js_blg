@@ -22,6 +22,7 @@ class User
         this.img_src = img_src;
         this.password = password;
     }
+    get getPass(){return this.password;}
 }
 
 let dummyUser = new User("Mr.Nobody", "some url", "abcd");
@@ -119,3 +120,4 @@ function render()
 }
 
 window.onload = render;
+
