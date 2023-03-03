@@ -91,9 +91,16 @@
     border: 1px solid #ccc;
     border-radius: 10px;
 }
+.blogpost_time{
+  display: block;
+  font-size: smaller;
+  color: grey;
+  font-family: cursive;
+}
 
 .blogpost_text
 {
+  margin-left: 60px;
     display: block;
     font-size: medium;
     font-family: sans-serif;
