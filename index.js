@@ -1,9 +1,12 @@
+let parent = document.getElementsByClassName("blogpost-container")[0]; 
+const blog_div = document.getElementsByClassName("blogpost")[0];
+const tempUser = JSON.parse(window.sessionStorage.getItem("currentUser"));
+const inputField = document.getElementById("input");
+let user = JSON.parse(window.sessionStorage.getItem("currentUser"));
+
 var userList = new Map()
 var blogList = new Map()
-if(window.localStorage.getItem("blogList"))
-    blogList = new Map(JSON.parse(window.localStorage.getItem("blogList")));
-if(window.localStorage.getItem("userList"))
-    userList = new Map(JSON.parse(window.localStorage.getItem("userList")));
+
 class User
 {
     constructor(username, img_src, password)
@@ -13,10 +16,6 @@ class User
         this.password = password;
     }
 }
-if(!window.sessionStorage.getItem("currentUser"))
-        window.location.href = "login.html";
-
-const tempUser = JSON.parse(window.sessionStorage.getItem("currentUser"));
 class Blog
 {
     constructor(user, blog_text)
@@ -24,31 +23,39 @@ class Blog
         this.user = user;
         this.blog_text = blog_text;
         this.date = new Date();
-        console.log("date:",this.date);
         const uuid = this.date.getTime();
-        console.log("uuid:", uuid);
         this.id = uuid;
     }
 }
 function createPost()
 {
-    var str = document.getElementById("input").value;
-    if(str==="")
-        return;
-    document.getElementById("input").value = "";
-    var user = JSON.parse(window.sessionStorage.getItem("currentUser"));
-    let post = new Blog(user, str);
+    var content = inputField.value.trim();
+    if(content==="") return;
+    inputField.value = "";
+    let blog = new Blog(user, content);
     userList.set(user.username, user);
-    blogList.set(post.id, post);
+    blogList.set(blog.id, blog);
     updateBlogStorage();
     updateUserStorage();
-    let parent = document.getElementsByClassName("blogpost-container")[0];
-    const blog_div = document.getElementsByClassName("blogpost")[0];
-    const dom_post = blog_div.cloneNode(true);
-    dom_post.querySelector(".username").textContent = `${user.username}`;
-    dom_post.querySelector(".blogpost_text").innerText = `${post.blog_text}`;
-    dom_post.querySelector(".blogpost_time").innerText = `${post.date.toLocaleDateString() + " " + post.date.toLocaleTimeString()}`;
-    parent.insertBefore(dom_post, parent.firstChild);
+    // const blog_div = document.getElementsByClassName("blogpost")[0];
+    // const dom_post = blog_div.cloneNode(true);
+    // dom_post.querySelector(".username").textContent = `${user.username}`;
+    // dom_post.querySelector(".blogpost_text").innerText = `${post.blog_text}`;
+    // dom_post.querySelector(".blogpost_time").innerText = `${post.date.toLocaleDateString() + " " + post.date.toLocaleTimeString()}`;
+    // parent.insertBefore(dom_post, parent.firstChild);
+    const post_success = postToEndPoint();
+    if(post_success)
+        addPostToDOM(blog, user);
+}
+function addPostToDOM(blog, user)
+{
+    // const blog_div = document.getElementsByClassName("blogpost")[0];
+    const dom_blog = blog_div.cloneNode(true);
+    dom_blog.querySelector(".username").textContent = `${user.username}`;
+    dom_blog.querySelector(".blogpost_text").innerText = `${blog.blog_text}`;
+    dom_blog.id = `${blog.id}`;
+    //dom_blog.querySelector(".blogpost_time").innerText = `${blog.date.toLocaleDateString() + " " + blog.date.toLocaleTimeString()}`;
+    parent.insertBefore(dom_blog, parent.firstChild);
 }
 function updateBlogStorage()
 {
@@ -74,23 +81,76 @@ function updateUserStorage()
 }
 function render()
 {
-    let parent = document.getElementsByClassName("blogpost-container")[0]; 
-    const blog_div = document.getElementsByClassName("blogpost")[0];
     console.log("Total blogs:", blogList.size);
-    parent.removeChild(parent.firstElementChild);
+    const first_ele = parent.firstElementChild;
+    if(first_ele!==null && first_ele.id==="template_blog")
+        parent.removeChild(first_ele)
 
     for(let [key,value] of blogList)
     {
-        const post = blog_div.cloneNode(true);
-        post.querySelector(".username").textContent = `${value.user.username}`;
-        post.querySelector(".blogpost_text").innerText = `${value.blog_text}`;
-        post.querySelector(".blogpost_text").innerText = `${value.blog_text}`;
-        parent.insertBefore(post, parent.firstChild);
+        addPostToDOM(value, value.user);
     }
+    getAllBlogsFromEndPoint();
 }
 document.getElementById("logout").addEventListener("click", ()=>{;
     window.sessionStorage.clear();
     window.location.href = "login.html";
 })
+
+
+if(!window.sessionStorage.getItem("currentUser"))
+        window.location.href = "login.html";
+
+if(window.localStorage.getItem("blogList"))
+    blogList = new Map(JSON.parse(window.localStorage.getItem("blogList")));
+if(window.localStorage.getItem("userList"))
+    userList = new Map(JSON.parse(window.localStorage.getItem("userList")));
+
+
+async function getAllBlogsFromEndPoint()
+{
+    const url = 'http://localhost:4000/blog';
+    const url_fake = "http://localhost:4000/blogzz";
+    const proxyUrl = 'http://localhost:8010/proxy/blog'
+
+    const response = await fetch(proxyUrl, {
+        method: 'GET',
+        headers: {'content-type': 'application/json'},
+       })
+       .then(response => response.json())
+       .catch(e => console.log(e.message));
+    //console.log(response);
+    //console.log(typeof response);
+    // console.log(response[0].content);
+    return response;
+}
+
+async function postToEndPoint(blog_content, blog_author)
+{
+    const data = {
+        content: blog_author,
+        author: blog_content
+    }
+
+    const proxyUrl = 'http://localhost:8010/proxy/blog'
+    const success = await fetch(proxyUrl,{
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if(response.ok)
+            return true;
+        else
+            throw new Error("POST request failed");
+    })
+    .catch(error => {
+        console.log("error");
+        return false;
+    });
+
+    return success;
+}
+
 window.onload = render;
 
