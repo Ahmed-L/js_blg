@@ -4,8 +4,6 @@ const tempUser = JSON.parse(window.sessionStorage.getItem("currentUser"));
 const inputField = document.getElementById("input");
 let user = JSON.parse(window.sessionStorage.getItem("currentUser"));
 
-var userList = new Map()
-var blogList = new Map()
 
 class User
 {
@@ -16,81 +14,42 @@ class User
         this.password = password;
     }
 }
-class Blog
-{
-    constructor(user, blog_text)
-    {
-        this.user = user;
-        this.blog_text = blog_text;
-        this.date = new Date();
-        const uuid = this.date.getTime();
-        this.id = uuid;
-    }
-}
-function createPost()
+async function createPost()
 {
     var content = inputField.value.trim();
     if(content==="") return;
     inputField.value = "";
-    let blog = new Blog(user, content);
-    userList.set(user.username, user);
-    blogList.set(blog.id, blog);
-    updateBlogStorage();
-    updateUserStorage();
-    // const blog_div = document.getElementsByClassName("blogpost")[0];
-    // const dom_post = blog_div.cloneNode(true);
-    // dom_post.querySelector(".username").textContent = `${user.username}`;
-    // dom_post.querySelector(".blogpost_text").innerText = `${post.blog_text}`;
-    // dom_post.querySelector(".blogpost_time").innerText = `${post.date.toLocaleDateString() + " " + post.date.toLocaleTimeString()}`;
-    // parent.insertBefore(dom_post, parent.firstChild);
-    const post_success = postToEndPoint();
+    const post_success = await postToEndPoint(content, user.username);
     if(post_success)
-        addPostToDOM(blog, user);
+    {
+        const blog_list = await getAllBlogsFromEndPoint();
+        const mostRecentBlog = getMostRecentBlogId(user.username, blog_list);
+        const blog_uuid = mostRecentBlog.uuid;
+        console.log(blog_uuid);
+        addPostToDOM(content, user.username, blog_uuid);
+    }
 }
-function addPostToDOM(blog, user)
+function addPostToDOM(blog_content, author, blog_uuid)
 {
-    // const blog_div = document.getElementsByClassName("blogpost")[0];
     const dom_blog = blog_div.cloneNode(true);
-    dom_blog.querySelector(".username").textContent = `${user.username}`;
-    dom_blog.querySelector(".blogpost_text").innerText = `${blog.blog_text}`;
-    dom_blog.id = `${blog.id}`;
+    dom_blog.querySelector(".username").textContent = `${author}`;
+    dom_blog.querySelector(".blogpost_text").innerText = `${blog_content}`;
+    dom_blog.id = `${blog_uuid}`;
     //dom_blog.querySelector(".blogpost_time").innerText = `${blog.date.toLocaleDateString() + " " + blog.date.toLocaleTimeString()}`;
     parent.insertBefore(dom_blog, parent.firstChild);
 }
-function updateBlogStorage()
+async function render()
 {
-    try{
-        const serializedMap = JSON.stringify([...blogList.entries()]);
-        localStorage.setItem('blogList', serializedMap);
-        }
-        catch
-        {
-            console.log("failed to store blog map to the localstorage");
-        }
-}
-function updateUserStorage()
-{
-    try{
-        const serializedMap = JSON.stringify([...userList.entries()]);
-        localStorage.setItem('userList', serializedMap);
-        }
-        catch
-        {
-            console.log("failed to store user map to the localstorage");
-        }
-}
-function render()
-{
-    console.log("Total blogs:", blogList.size);
     const first_ele = parent.firstElementChild;
     if(first_ele!==null && first_ele.id==="template_blog")
         parent.removeChild(first_ele)
 
-    for(let [key,value] of blogList)
+    let list_of_blogs = await getAllBlogsFromEndPoint();
+    console.log(list_of_blogs)
+    for(let i=0;i<list_of_blogs.length;i++)
     {
-        addPostToDOM(value, value.user);
+        addPostToDOM(list_of_blogs[i].content, list_of_blogs[i].author, list_of_blogs[i].uuid);
     }
-    getAllBlogsFromEndPoint();
 }
 document.getElementById("logout").addEventListener("click", ()=>{;
     window.sessionStorage.clear();
@@ -119,17 +78,14 @@ async function getAllBlogsFromEndPoint()
        })
        .then(response => response.json())
        .catch(e => console.log(e.message));
-    //console.log(response);
-    //console.log(typeof response);
-    // console.log(response[0].content);
     return response;
 }
 
 async function postToEndPoint(blog_content, blog_author)
 {
     const data = {
-        content: blog_author,
-        author: blog_content
+        content: blog_content,
+        author: blog_author
     }
 
     const proxyUrl = 'http://localhost:8010/proxy/blog'
@@ -150,6 +106,24 @@ async function postToEndPoint(blog_content, blog_author)
     });
 
     return success;
+}
+
+async function getBlogById(id)
+{
+    const proxyUrl = `http://localhost:8010/proxy/blog/${id}`
+
+    const response = await fetch(proxyUrl, {
+        method: 'GET',
+        headers: {'content-type': 'application/json'},
+       })
+       .then(response => response.json())
+       .catch(e => console.log(e.message));
+    return response;
+}
+function getMostRecentBlogId(author, bloglist)
+{
+    const filteredList = bloglist.filter(blog => blog.author===author);
+    return filteredList[filteredList.length - 1];
 }
 
 window.onload = render;
