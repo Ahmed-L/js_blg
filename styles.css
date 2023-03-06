@@ -11,6 +11,24 @@
     resize: none;
   }
 
+  #edit_blog_input_textarea{
+    resize: none;
+    width: 100%;
+    height: 80%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+    margin: auto;
+  }
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+  .button-div{
+    align-self: right;
+  }
+
   #input_label{
     margin-top: 10px;
     font-family: Helvetica, sans-serif;
@@ -36,6 +54,22 @@
     width: min-content;
     box-shadow: 0px 0px 5px blueviolet;
 
+  }
+
+  .modal_btn
+  {
+    color: #682b70;
+    font-weight: bold;
+    background-color: rgb(255, 254, 255);
+    box-shadow: 0px 0px 5px rgba(35, 15, 53, 0.692);
+    border: 5px rgba(17, 17, 75, 0.747);
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-left: 2px;
+  }
+  .modal_btn:hover{
+    background-color: blueviolet;
+    color: white;
   }
 
   #input_button:hover{
@@ -67,18 +101,6 @@
     border-radius: 50%;
     object-fit: cover;
 }
-
-.username{
-    margin-left: 10px;
-    display: block;
-    text-align: justify;
-    font-size: 30px;
-    font-weight: bold;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    position: relative;
-    margin-top: 5px;
-}
-
 .blogpost
 {
     display: flex;
@@ -92,13 +114,6 @@
     border: 1px solid #ccc;
     border-radius: 10px;
 }
-.blogpost_time{
-  display: block;
-  font-size: 10px;
-  color: grey;
-  font-family: cursive;
-}
-
 .blogpost_text
 {
     margin-top: 25px;
@@ -133,11 +148,6 @@ html, body {
   margin: 0px auto 10px;
   padding: 0;
 }
-
-
-
-
-
 .login-form{
   display: flex;
   flex-direction: column;
@@ -158,7 +168,6 @@ html, body {
   border: none;
   background: #f1f1f1;
 }
-
 .login-form label{
   font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
@@ -168,7 +177,6 @@ html, body {
   margin: 4px auto 0;
   display: block;
 }
-
 .login-form button{
   padding: 15px;
   width: 25%;
@@ -183,27 +191,127 @@ html, body {
 .login-form button:hover{
   background-color: rgb(62, 20, 102);
 }
-
+.username-time-div{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.username-time-div>h2{
+  margin: 0;
+  display: block;
+  text-align: justify;
+  font-weight: bold;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  position: relative;
+  line-height: 0px;
+  text-transform: capitalize;
+}
+.username-time-div>p{
+  line-height:0;
+  display: block;
+  font-size: 12px;
+  color: grey;
+  font-family: cursive;
+}
 .edit_btn
 {
-  position:absolute;
-  right: 0;
-  top: 5px;
-  background: none;
+  background-color: blueviolet;
   border: 2px rebeccapurple;
-  color: #73227e;
-  font-size: 1.5rem;
-  padding: 0;
-  margin: 0;
+  color: white;
+  cursor: pointer;
+}
+.delete_btn{
+  border: 2px rebeccapurple;
+  background-color: red;
+  color: white;
   cursor: pointer;
 }
 
 .inner_blog_container{
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+}
+.btn{
+  padding: 7px 30px;
+}
+.modal{
+  display: none;
+  position: fixed;
+  background-color: rgba(0,0,0,0.4);
+  width: 100%;
+  height: 100%;
+  padding-top: 100px;
+  z-index: 1;
+  top: 0;
+  overflow: auto;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 20px auto 0;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+  height: 40%;
   position: relative;
 }
 
-/* .login-form label,
-.login-form input,
-.login-form button {
-  margin: 5px 0;
-} */
+
+.like-comment-count{
+  display: flex;
+  gap: 35px;
+}
+
+.button-container-lc
+{
+  display: flex;
+  gap: 50px;
+  margin-top: 5px;
+}
+.lc_btn{
+  width: 45%;
+  font-size: 15px;
+  font-weight: bold;
+  color: blueviolet;
+  background-color: rgba(137, 43, 226, 0);
+  padding: 10px 65px;
+  border-radius: 3px;
+  border: none;
+}
+.lc_btn:hover{
+  color: white;
+  background-color: blueviolet;
+}
+
+.seperator{
+  border-top: 1px solid rgba(86, 90, 86, 0.281);
+}
+
+.comment-section{
+  display: flex;
+  flex-direction: column;
+}
+.comment-input{
+  display: flex;
+}
+.comment{
+  border-radius: 10px;
+  padding: 10px;
+  width: 400px;
+}
+.comment-form{
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  padding: 10px;
+  gap: 5px;
+}
+.comment_submit_btn{
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgb(86, 11, 177);
+  color: white;
+  font-weight: bold;
+}

@@ -22,15 +22,63 @@
                 <button id="input_button" type="button" onclick="createPost()">Post</button>
         </div>
 
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <textarea id="edit_blog_input_textarea" placeholder="Edit your post"></textarea>
+                <button type="button" class="modal_btn" id="edit_blog_save_btn">Save</button>
+                <button type="button" class="modal_btn" id="edit_blog_cancel_btn">Cancel</button>
+              </div>
+        </div>
+
         <div class="blogpost-container">
             <div class="blogpost" id="template_blog">
+                <div class="header">
                 <div style="display: flex;" class="inner_blog_container">
                     <img class="profile-image" src="https://i.pinimg.com/originals/54/e6/3c/54e63c9e4830da4bc23912e6d941e53c.png" alt="profile-image">
-                    <span class="username">Username</span>
-                    <button class="edit_btn">Edit</button>
+                    <div class="username-time-div">
+                        <h2 class="username">Username</h2>
+                        <p class="blogpost_time">random timestamp</p>
+                    </div>
+                </div>
+                    <div class="button-div">
+                        <button class="btn edit_btn">Edit</button>
+                        <button class="btn delete_btn">Delete</button>
+                    </div>
+                    
                 </div>
                 <p class="blogpost_text">Posts will appear here</p>
-                <p class="blogpost_time">random timestamp</p>
+                <div class="properties-container">
+                    <br>
+                    <div class="like-comment-count">
+                        <div class="like-count">
+                            <span>Likes: </span>
+                            <span>0</span>
+                        </div>
+                        <div class="comment-count">
+                            <span>Comments: </span>
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <hr class="seperator">
+                    <div class="like-comment-div">
+                        <div class="button-container-lc">
+                            <button class="like_btn lc_btn">Like</button>
+                            <button class="comment_btn lc_btn">Comment</button>
+                        </div>
+                        <hr class="seperator">
+                        <div class="comment-section">
+                            <div class="comment-list">
+                                
+                            </div>
+                            <div class="comment-input">
+                                <form class="comment-form">
+                                    <input type="text" class="comment" placeholder="Write a comment">
+                                    <button class="comment_submit_btn">Send</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

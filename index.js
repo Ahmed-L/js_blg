@@ -3,16 +3,16 @@ const blog_div = document.getElementsByClassName("blogpost")[0];
 const tempUser = JSON.parse(window.sessionStorage.getItem("currentUser"));
 const inputField = document.getElementById("input");
 let user = JSON.parse(window.sessionStorage.getItem("currentUser"));
-
+const edit_cancel = document.getElementById("edit_blog_cancel_btn");
+const edit_save = document.getElementById("edit_blog_save_btn");
+const modal = document.getElementById("myModal");
+const modal_input = document.getElementById("edit_blog_input_textarea");
+// const like_btn = document.getElementById
+var trackBlogId = 0;
 
 class User
 {
-    constructor(username, img_src, password)
-    {
-        this.username = username;
-        this.img_src = img_src;
-        this.password = password;
-    }
+    constructor(username, img_src, password){this.username = username;this.img_src = img_src;this.password = password;}
 }
 async function createPost()
 {
@@ -29,13 +29,41 @@ async function createPost()
         addPostToDOM(content, user.username, blog_uuid);
     }
 }
-function addPostToDOM(blog_content, author, blog_uuid)
+function addPostToDOM(blog_content, author, blog_uuid, likes_list)
 {
     const dom_blog = blog_div.cloneNode(true);
     dom_blog.querySelector(".username").textContent = `${author}`;
     dom_blog.querySelector(".blogpost_text").innerText = `${blog_content}`;
     dom_blog.id = `${blog_uuid}`;
     //dom_blog.querySelector(".blogpost_time").innerText = `${blog.date.toLocaleDateString() + " " + blog.date.toLocaleTimeString()}`;
+    const edit = dom_blog.querySelector(".edit_btn");
+    const del = dom_blog.querySelector(".delete_btn");
+    let same_user_liked_check = undefined;
+    let count = 0
+    let like_count = dom_blog.querySelector(".like-count");
+    console.log("like-list: ", likes_list);
+    if(likes_list!==undefined)
+    {
+        console.log("working")
+        same_user_liked_check = likes_list.find(element => element.user === user.username)
+        //same_user_liked_check = likes_list.find(element => {element.user === user.username})
+        like_count.getElementsByTagName("span")[1].textContent = likes_list.length;
+    }
+    console.log("same user liked?: ", same_user_liked_check)
+    console.log(like_count.getElementsByTagName("span")[1].textContent)
+    const like_btn = dom_blog.querySelector(".like_btn");
+    console.log(like_btn);
+    if(same_user_liked_check!==undefined)
+    {
+        like_btn.textContent = "Liked!";
+        like_btn.style.background = "blueviolet";
+        like_btn.style.color = "white";
+    }
+    if(author!==user.username)
+    {
+        edit.parentNode.removeChild(edit);
+        del.parentNode.removeChild(del);
+    }
     parent.insertBefore(dom_blog, parent.firstChild);
 }
 async function render()
@@ -48,7 +76,7 @@ async function render()
     console.log(list_of_blogs)
     for(let i=0;i<list_of_blogs.length;i++)
     {
-        addPostToDOM(list_of_blogs[i].content, list_of_blogs[i].author, list_of_blogs[i].uuid);
+        addPostToDOM(list_of_blogs[i].content, list_of_blogs[i].author, list_of_blogs[i].uuid, list_of_blogs[i].likes);
     }
 }
 document.getElementById("logout").addEventListener("click", ()=>{;
@@ -69,8 +97,7 @@ if(window.localStorage.getItem("userList"))
 async function getAllBlogsFromEndPoint()
 {
     const url = 'http://localhost:4000/blog';
-    const url_fake = "http://localhost:4000/blogzz";
-    const proxyUrl = 'http://localhost:8010/proxy/blog'
+    const proxyUrl = 'http://localhost:4000/blog';
 
     const response = await fetch(proxyUrl, {
         method: 'GET',
@@ -88,7 +115,7 @@ async function postToEndPoint(blog_content, blog_author)
         author: blog_author
     }
 
-    const proxyUrl = 'http://localhost:8010/proxy/blog'
+    const proxyUrl = 'http://localhost:4000/blog'
     const success = await fetch(proxyUrl,{
         method: 'POST',
         headers: {'content-type': 'application/json'},
@@ -107,10 +134,68 @@ async function postToEndPoint(blog_content, blog_author)
 
     return success;
 }
+async function deleteBlogById(blog_id)
+{
+    const proxyUrl = `http://localhost:4000/blog/${blog_id}`;
+    const success = await fetch(proxyUrl, {
+        method:'DELETE',
+        headers: {'content-type':'application/json'}
+    }).then(response => {
+        if(response.ok)
+            return true;
+        else throw new Error("DELETE request failed");
+    })
+    .catch(err=>{
+        console.log("error: ", err);
+        return false;
+    })
+}
+async function updateBlogContenttoEndPoint(blog_content, blog_id)
+{
+    const data = {content:blog_content}
+    console.log("Data is: ", data);
+    const proxyUrl = `http://localhost:4000/blog/${blog_id}`;
+    const success = await fetch(proxyUrl,{
+        method: 'PATCH',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if(response.ok)
+            return true;
+        else
+            throw new Error("PATCH request failed");
+    })
+    .catch(error => {
+        console.log("error:", error);
+        return false;
+    });
 
+    return success;
+}
+async function addLike(blog_id, liked_by)
+{
+    const data = {user:liked_by};
+    console.log(data);
+    console.log(blog_id)
+    const proxyUrl = `http://localhost:4000/blog/like/${blog_id}`;
+    const success = await fetch(proxyUrl, {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if(response.ok)
+            return true;
+        else
+            throw new Error("Like POST request failed");
+    })
+    return success;
+
+}
 async function getBlogById(id)
 {
-    const proxyUrl = `http://localhost:8010/proxy/blog/${id}`
+    const proxyUrl = `http://localhost:4000/blog/${id}`
 
     const response = await fetch(proxyUrl, {
         method: 'GET',
@@ -126,5 +211,70 @@ function getMostRecentBlogId(author, bloglist)
     return filteredList[filteredList.length - 1];
 }
 
+edit_cancel.addEventListener("click", ()=>{
+    modal.style.display = "none";
+})
+
+edit_save.addEventListener("click", ()=>{
+    const new_text = modal_input.value;
+    console.log("New input: ", new_text)
+    const blog_id = trackBlogId;
+    console.log(blog_id);
+    let success = updateBlogContenttoEndPoint(new_text, blog_id);
+    if(success)
+    {
+        modal.style.display = "none";
+        const x = document.getElementById(blog_id);
+        x.querySelector(".blogpost_text").textContent = new_text;
+    }
+})
+
+parent.addEventListener("click", function(e){
+    handle_blog_events(e);
+});
+
+function handle_blog_events(e)
+{
+    trackBlogId = e.target.parentNode.parentNode.parentNode.id;
+    if(e.target.classList.contains("edit_btn"))
+    {
+        const input_textarea = e.target.parentNode.parentNode.parentNode.getElementsByClassName("blogpost_text")[0];
+        const old_text = input_textarea.textContent;
+        modal_input.value = old_text;
+        modal.style.display = "block";
+    }
+    else if(e.target.classList.contains("delete_btn"))
+    {
+        const success = deleteBlogById(trackBlogId);
+        if(success)
+        {
+            const blog = document.getElementById(trackBlogId);
+            blog.parentElement.removeChild(blog);
+        }
+    }
+    else if(e.target.classList.contains("like_btn"))
+    {
+        if(e.target.textContent==="Like")
+        {
+            trackBlogId = e.target.parentNode.parentNode.parentNode.parentNode.id;
+            const success = addLike(trackBlogId, user.username);
+            if(!success)
+                return;
+            e.target.textContent = "Liked!";
+            e.target.style.background = "blueviolet";
+            e.target.style.color = "white";
+            const like_span = e.target.parentNode.parentNode.parentNode.querySelector(".like-count").getElementsByTagName("span")[1];
+            like_span.textContent = parseInt(like_span.textContent) + 1;
+            
+        }
+        // else
+        // {
+        //     e.target.textContent = "Like";
+        //     e.target.style.background = "none";
+        //     e.target.style.color = "blueviolet";
+        // }
+    }
+    //to be added for likes/comments
+}
 window.onload = render;
 
