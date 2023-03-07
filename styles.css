@@ -205,6 +205,7 @@ html, body {
   position: relative;
   line-height: 0px;
   text-transform: capitalize;
+  margin-top: 12px;
 }
 .username-time-div>p{
   line-height:0;
@@ -294,19 +295,20 @@ html, body {
   flex-direction: column;
 }
 .comment-input{
-  display: flex;
+  display: none;
 }
 .comment{
   border-radius: 10px;
   padding: 10px;
-  width: 400px;
+  width: 600px;
 }
 .comment-form{
   display: flex;
   flex-direction: row;
-  margin: auto;
+  margin: start;
   padding: 10px;
   gap: 5px;
+  width: max-content;
 }
 .comment_submit_btn{
   padding: 10px;
@@ -314,4 +316,79 @@ html, body {
   background-color: rgb(86, 11, 177);
   color: white;
   font-weight: bold;
+}
+
+.comment_header{
+  height: inherit;
+  width: 600px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: show;
+}
+.comment_header>h4{
+  margin: 0;
+  display: block;
+  text-align: justify;
+  font-weight: bold;
+  position: relative;
+  line-height: 0px;
+  text-transform: capitalize;
+  margin-top: 4px;
+}
+.comment_time{
+  line-height:5px;
+  display: block;
+  font-size: 10px;
+  color: rgb(80, 65, 65);
+  font-family: cursive;
+  height: max-content;
+}
+/* .comment_header>p{
+  line-height:5px;
+  display: block;
+  font-size: 10px;
+  color: rgb(80, 65, 65);
+  font-family: cursive;
+  height: max-content;
+} */
+.comment_post_inner{
+  display: flex;
+  gap: 5px;
+  margin-top: 2px;
+  margin-bottom: 10px;
+  height: inherit;
+  width: inherit;
+}
+
+.comment_post{
+  width: max-content;
+  height: max-content;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.profile-image-comment{
+  display: inline;
+  height: 45px;
+  width: 45px;
+  border-radius: 40%;
+  object-fit: cover;
+}
+
+.comment_text{
+  margin: 0;
+  font-size: 15px !important;
+  position: relative;
+  top: 1px;
+  padding: 12px 17px 12px 12px;
+  border-radius: 10px;
+  background-color: rgba(192, 170, 183, 0.438);
+  height: max-content;
+}
+.comment_list{
+  max-height: 1000px !important;
+  overflow: scroll;
+  /* min-height: max-content; */
 }
