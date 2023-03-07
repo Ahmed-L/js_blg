@@ -99,7 +99,6 @@ if(window.localStorage.getItem("userList"))
 
 async function getAllBlogsFromEndPoint()
 {
-    const url = 'http://localhost:4000/blog';
     const proxyUrl = 'http://localhost:4000/blog';
 
     const response = await fetch(proxyUrl, {
@@ -113,6 +112,7 @@ async function getAllBlogsFromEndPoint()
 
 function addSingleCommentToDOMElement(comment_message, comment_time, commenter, blog_id)
 {
+    console.log(commenter);
     let currentBlogElement = document.getElementById(blog_id);
     const newCommentElement = commentMapElement.cloneNode(true);
     newCommentElement.id = blog_id;
@@ -126,7 +126,7 @@ function addSingleCommentToDOMElement(comment_message, comment_time, commenter, 
 async function addCommentsToDOMElement(blog_id)
 {
     const blog = await getBlogById(blog_id);
-    // console.log(blog);
+    console.log(blog);
     let len = 0;
     if(blog.comments === undefined || blog.comments.length === 0)
         len = 0;
@@ -137,6 +137,7 @@ async function addCommentsToDOMElement(blog_id)
     currentBlogElement.querySelector(".comment-input").style.display = 'flex';
     for(let i=0;i<len;i++)
     {
+        console.log(blog.comments[0].user)
         addSingleCommentToDOMElement(blog.comments[i].message, blog.comments[i].created_at, blog.comments[i].user, blog_id);
     }
 }
@@ -226,8 +227,9 @@ async function addLike(blog_id, liked_by)
 }
 async function addComment(blog_id, comment_message, commented_by)
 {
-    console.log("blog_id is: ", blog_id);
-    const data = {message:comment_message, comment_message:commented_by}
+    // console.log("blog_id is: ", blog_id);
+    // console.log("commented by: ", commented_by);
+    const data = {message:comment_message, user:commented_by}
     const proxyUrl = `http://localhost:4000/blog/commnet/${blog_id}`;
     const success = await fetch(proxyUrl, {
         method: "POST",
@@ -331,13 +333,18 @@ function handle_blog_events(e)
     }
     else if(e.target.classList.contains("comment_submit_btn"))
     {   trackBlogId = e.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id;
+        let comment_count = e.target.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByTagName("span")[3];
         // console.log(trackBlogId);
         // console.log("clicked comment submit");
         const input = e.target.parentNode.querySelector(".comment");
         let comment = input.value;
         input.value = "";
-        const success = addComment(trackBlogId, comment, user.username)
-        .then(addCommentsToDOMElement(trackBlogId))
+        addComment(trackBlogId, comment, user.username)
+        .then(()=>
+        {
+            addSingleCommentToDOMElement(comment, new Date(), user.username, trackBlogId);
+            comment_count.textContent = parseInt(comment_count.textContent) + 1;
+        })
         .catch(e => console.log("error: ", e))
     }
     //to be added for likes/comments

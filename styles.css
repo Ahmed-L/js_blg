@@ -386,6 +386,7 @@ html, body {
   border-radius: 10px;
   background-color: rgba(192, 170, 183, 0.438);
   height: max-content;
+  width: max-content;
 }
 .comment_list{
   max-height: 1000px !important;
