@@ -329,6 +329,10 @@ function handle_blog_events(e)
     {
         trackBlogId = e.target.parentNode.parentNode.parentNode.parentNode.id;
         // console.log("clicked comment")
+        const commentList = document.getElementById(trackBlogId).querySelector(".comment-list");
+        commentList.innerHTML = "";
+        // while(commentList.hasChildNodes)
+        //     commentList.removeChild(commentList.firstChild);
         addCommentsToDOMElement(trackBlogId);
     }
     else if(e.target.classList.contains("comment_submit_btn"))
@@ -350,4 +354,3 @@ function handle_blog_events(e)
     //to be added for likes/comments
 }
 window.onload = render;
-
